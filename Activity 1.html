@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop Processing Methods</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+        .box { width: 250px; min-height: 500px; border: 2px dashed #333; padding: 10px; }
+        .draggable { padding: 8px; margin: 5px; background-color: lightblue; cursor: grab; }
+        #options { 
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-width: 520px;
+            margin: 0 auto 20px auto;
+            padding: 10px;
+            border: 2px solid #333;
+            background-color: #f9f9f9;
+        }
+        #resetBtn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #resetBtn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h2>Drag and Drop Processing Methods</h2>
+    <p>Drag the methods to the correct processing group.</p>
+    
+    <h3>Processing Methods</h3>
+    <div id="options"></div>
+    
+    <div class="container">
+        <div id="chemical" class="box" ondrop="drop(event, 'chemical')" ondragover="allowDrop(event)">
+            <h3>Chemical Processing Methods</h3>
+        </div>
+        
+        <div id="physical" class="box" ondrop="drop(event, 'physical')" ondragover="allowDrop(event)">
+            <h3>Physical Processing Methods</h3>
+        </div>
+    </div>
+    
+    <button id="resetBtn" onclick="resetGame()">Reset Game</button>
+    
+    <script>
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+        
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+        }
+        
+        function drop(event, category) {
+            event.preventDefault();
+            var data = event.dataTransfer.getData("text");
+            var element = document.getElementById(data);
+            var validChemical = ["preservatives", "pH"];
+            var validPhysical = ["blanching", "retorting", "pasteurization", "frying", "refrigeration", "freezing", "irradiation", "evaporation", "extrusion", "dehydration"];
+            
+            if ((category === 'chemical' && validChemical.includes(data)) ||
+                (category === 'physical' && validPhysical.includes(data))) {
+                event.target.appendChild(element);
+            } else {
+                alert("Incorrect category!");
+            }
+        }
+
+        function resetGame() {
+            location.reload();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var methods = [
+                { id: "preservatives", text: "Addition of Preservatives" },
+                { id: "pH", text: "pH Control" },
+                { id: "blanching", text: "Blanching" },
+                { id: "retorting", text: "Sterilization (Retorting)" },
+                { id: "pasteurization", text: "Pasteurization" },
+                { id: "frying", text: "Frying" },
+                { id: "refrigeration", text: "Refrigeration" },
+                { id: "freezing", text: "Freezing" },
+                { id: "irradiation", text: "Irradiation" },
+                { id: "evaporation", text: "Evaporation" },
+                { id: "extrusion", text: "Extrusion" },
+                { id: "dehydration", text: "Dehydration" }
+            ];
+            
+            methods.sort(() => Math.random() - 0.5);
+            
+            var optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            methods.forEach(method => {
+                var div = document.createElement("div");
+                div.className = "draggable";
+                div.draggable = true;
+                div.id = method.id;
+                div.ondragstart = drag;
+                div.textContent = method.text;
+                optionsContainer.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html>
