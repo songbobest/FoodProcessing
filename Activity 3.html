@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity 3: Process Control in Sugar Cane Milling</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 20px; }
+        .row { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 2px dashed #333; padding: 10px; min-width: 600px; min-height: 50px; }
+        .description { text-align: left; flex: 1; }
+        .draggable { padding: 8px; margin: 5px; background-color: lightgreen; cursor: grab; display: inline-block; }
+        #controls { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        #resetBtn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #resetBtn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h2>Activity 3: Process Control in Sugar Cane Milling</h2>
+    <p>Drag the candidate process controls into its most suitable functions. Candidate controls can be used multiple times.</p>
+    
+    <h3>Candidate Process Controls</h3>
+    <div id="controls">
+        <div class="draggable" draggable="true" id="millingTrain">Milling Train Control</div>
+        <div class="draggable" draggable="true" id="pHControl">pH Control</div>
+        <div class="draggable" draggable="true" id="macerationWater">Maceration Water Control</div>
+        <div class="draggable" draggable="true" id="vacuumPan">Vacuum Pan Control</div>
+    </div>
+    
+    <div class="container" id="descriptionContainer"></div>
+    
+    <button id="resetBtn" onclick="resetGame()">Reset</button>
+    
+    <script>
+        const descriptions = [
+            { text: "Maintain optimum throughput of cane and optimum juice extraction.", correct: "millingTrain" },
+            { text: "Maintain mass balance throughout the mill train.", correct: "millingTrain" },
+            { text: "Monitor the addition of saccharate into the mixed juice as part of the clarification stage.", correct: "pHControl" },
+            { text: "Maintain an optimum ratio of mass of maceration water to mass of bagasse fibre to achieve maximum extraction of juice.", correct: "macerationWater" },
+            { text: "Regulate temperature, pressure, and supersaturation to ensure efficient sugar crystallization.", correct: "vacuumPan" },
+            { text: "Maintain optimal vacuum levels, feed rate of syrup, and steam supply.", correct: "vacuumPan" }
+        ];
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function loadDescriptions() {
+            shuffleArray(descriptions);
+            const container = document.getElementById("descriptionContainer");
+            container.innerHTML = "";
+            descriptions.forEach(desc => {
+                const row = document.createElement("div");
+                row.className = "row";
+                row.setAttribute("data-correct", desc.correct);
+                row.setAttribute("ondrop", "drop(event, this)");
+                row.setAttribute("ondragover", "allowDrop(event)");
+                row.innerHTML = `<p class='description'>${desc.text}</p>`;
+                container.appendChild(row);
+            });
+        }
+
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+        
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+        }
+        
+        function drop(event, row) {
+            event.preventDefault();
+            var data = event.dataTransfer.getData("text");
+            
+            if (row.children.length < 2) { // Ensure only one control method per row
+                var clonedElement = document.getElementById(data).cloneNode(true);
+                clonedElement.ondragstart = drag;
+                row.appendChild(clonedElement);
+                
+                if (data !== row.getAttribute("data-correct")) {
+                    alert("Incorrect match! Try again.");
+                    row.removeChild(clonedElement);
+                }
+            } else {
+                alert("Each row can only accept one control method.");
+            }
+        }
+
+        function resetGame() {
+            loadDescriptions();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var controls = document.querySelectorAll(".draggable");
+            controls.forEach(control => control.ondragstart = drag);
+            loadDescriptions();
+        });
+    </script>
+</body>
+</html>
