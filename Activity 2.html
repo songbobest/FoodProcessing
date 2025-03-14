@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity 2: The Sugar Cane Milling Process</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+        .box { width: 250px; min-height: 500px; border: 2px dashed #333; padding: 10px; }
+        .draggable { padding: 8px; margin: 5px; background-color: lightblue; cursor: grab; }
+        #options { 
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-width: 520px;
+            margin: 0 auto 20px auto;
+            padding: 10px;
+            border: 2px solid #333;
+            background-color: #f9f9f9;
+        }
+        #resetBtn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #resetBtn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h2>Activity 2: The Sugar Cane Milling Process</h2>
+    <p>Please drag and drop the following candidate processing devices, processes and products to the correct phase of the sugar cane milling process.</p>
+    
+    <h3>Candidate Devices, Processes and Products</h3>
+    <div id="options"></div>
+    
+    <div class="container">
+        <div id="phase1" class="box" ondrop="drop(event, 'phase1')" ondragover="allowDrop(event)">
+            <h3>Phase 1: Cane Preparation</h3>
+        </div>
+        
+        <div id="phase2" class="box" ondrop="drop(event, 'phase2')" ondragover="allowDrop(event)">
+            <h3>Phase 2: Juice Extraction</h3>
+        </div>
+        
+        <div id="phase3" class="box" ondrop="drop(event, 'phase3')" ondragover="allowDrop(event)">
+            <h3>Phase 3: Juice Processing</h3>
+        </div>
+    </div>
+    
+    <button id="resetBtn" onclick="resetGame()">Reset</button>
+    
+    <script>
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+        
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+        }
+        
+        function drop(event, category) {
+            event.preventDefault();
+            var data = event.dataTransfer.getData("text");
+            var element = document.getElementById(data);
+            var validPhase1 = ["caneCarrier", "caneShredder", "pulverizedCane"];
+            var validPhase2 = ["pressureFeeder", "millingTrain", "bagasse"];
+            var validPhase3 = ["juiceClarification", "juiceEvaporation", "crystallisation", "syrup", "sugarCrystals"];
+            
+            if ((category === 'phase1' && validPhase1.includes(data)) ||
+                (category === 'phase2' && validPhase2.includes(data)) ||
+                (category === 'phase3' && validPhase3.includes(data))) {
+                event.target.appendChild(element);
+            } else {
+                alert("Incorrect category!");
+            }
+        }
+
+        function resetGame() {
+            location.reload();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var methods = [
+                { id: "caneCarrier", text: "Cane Carrier" },
+                { id: "caneShredder", text: "Cane Shredder" },
+                { id: "pulverizedCane", text: "Pulverized Cane" },
+                { id: "pressureFeeder", text: "Pressure Feeder Chute" },
+                { id: "millingTrain", text: "Milling Train" },
+                { id: "bagasse", text: "Bagasse" },
+                { id: "juiceClarification", text: "Juice Clarification" },
+                { id: "juiceEvaporation", text: "Juice Evaporation" },
+                { id: "crystallisation", text: "Crystallisation" },
+                { id: "syrup", text: "Syrup" },
+                { id: "sugarCrystals", text: "Sugar Crystals" }
+            ];
+            
+            methods.sort(() => Math.random() - 0.5);
+            
+            var optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            methods.forEach(method => {
+                var div = document.createElement("div");
+                div.className = "draggable";
+                div.draggable = true;
+                div.id = method.id;
+                div.ondragstart = drag;
+                div.textContent = method.text;
+                optionsContainer.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html>
